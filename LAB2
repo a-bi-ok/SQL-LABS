@@ -1,0 +1,73 @@
+-- Database: CS669
+
+-- DROP DATABASE "CS669";
+
+-- CREATE DATABASE "CS669"
+--     WITH 
+--     OWNER = postgres
+--     ENCODING = 'UTF8'
+--     LC_COLLATE = 'C'
+--     LC_CTYPE = 'C'
+--     TABLESPACE = pg_default
+--     CONNECTION LIMIT = -1;
+
+
+-- CREATE TABLE Delivery_Service (
+-- delivery_service_id DECIMAL(12) PRIMARY KEY,
+-- name VARCHAR(64) NOT NULL
+-- );
+-- CREATE TABLE Package (
+-- package_nr DECIMAL(12) NOT NULL,
+-- description VARCHAR(255) NOT NULL,
+-- date_delivered DATE NOT NULL,
+-- delivery_service_id DECIMAL(12)
+-- );
+-- ALTER TABLE Package
+-- ADD CONSTRAINT package_id
+-- PRIMARY KEY(package_nr);
+
+-- ALTER TABLE Package
+-- ADD CONSTRAINT delivery_service_fk
+-- FOREIGN KEY(delivery_service_id)
+-- REFERENCES Delivery_Service(delivery_service_id);
+
+-- INSERT INTO Delivery_Service (delivery_service_id, name)
+-- VALUES (101, 'United Package Delivery');
+-- INSERT INTO Delivery_Service (delivery_service_id, name)
+-- VALUES (102, 'Federal Delivery');
+-- INSERT INTO Delivery_Service (delivery_service_id, name)
+-- VALUES (103, 'Dynamic Duo Delivery');
+
+
+-- INSERT INTO Package (package_nr, description, date_delivered, delivery_service_id)
+-- VALUES (1001, 'Perfect diamonds', CAST('29-APR-2012' AS DATE), 101);
+
+-- INSERT INTO Package (package_nr, description, date_delivered, delivery_service_id)
+-- VALUES (1002, 'Care package', CAST('14-JUN-2012' AS DATE), 102);
+
+-- INSERT INTO Package (package_nr, description, date_delivered, delivery_service_id)
+-- VALUES (1003, 'French wine', CAST('19-JUL-2012' AS DATE), NULL);
+
+-- INSERT INTO Package (package_nr, description, date_delivered, delivery_service_id)
+-- VALUES (1004, 'Classified documents', CAST('11-JUL-2012' AS DATE), 105);
+
+-- SELECT description, date_delivered, name
+-- FROM Package
+-- JOIN Delivery_Service ON Delivery_Service.delivery_service_id = Package.delivery_service_id;
+
+-- SELECT description, date_delivered, name
+-- FROM Package
+-- LEFT JOIN Delivery_Service ON Delivery_Service.delivery_service_id = Package.delivery_service_id;
+
+-- SELECT description, date_delivered, name
+-- FROM Package
+-- RIGHT JOIN Delivery_Service ON Delivery_Service.delivery_service_id = Package.delivery_service_id;
+-- ORDER BY name;
+-- 
+-- SELECT description, date_delivered, name
+-- FROM Package
+-- FULL JOIN Restaurant ON Delivery_Service ON Delivery_Service.delivery_service_id = Package.delivery_service_id;
+-- ORDER BY description DESC;
+
+
+
