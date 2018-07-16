@@ -69,5 +69,20 @@
 -- FULL JOIN Restaurant ON Delivery_Service ON Delivery_Service.delivery_service_id = Package.delivery_service_id;
 -- ORDER BY description DESC;
 
+-- INNER JOIN EXAMPLE, EQUIVALENT TO A REGULAR JOIN
+-- SELECT description, date_served, name
+-- FROM Meal, Restaurant WHERE Meal.restaurant_id = Restaurant.restaurant_id
+-- ORDER BY description DESC;
 
-
+*******************************************************************************************************************
+-- SELECT description, date_served, name
+-- FROM Meal
+-- JOIN Restaurant ON Meal.restaurant_id = Restaurant.restaurant_id
+-- ORDER BY description DESC;
+*******************************************************************************************************************
+-- DIFFERENT QUERIES FOR SELECTING ALL
+-- SELECT * FROM Meal;
+-- SELECT meal.* FROM Meal;
+-- SELECT m.* FROM Meal m;
+-- SELECT * FROM Meal m;
+*******************************************************************************************************************
