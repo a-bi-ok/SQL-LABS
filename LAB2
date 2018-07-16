@@ -68,8 +68,8 @@
 -- FROM Package
 -- FULL JOIN Restaurant ON Delivery_Service ON Delivery_Service.delivery_service_id = Package.delivery_service_id;
 -- ORDER BY description DESC;
-
--- INNER JOIN EXAMPLE, EQUIVALENT TO A REGULAR JOIN
+*******************************************************************************************************************
+-- INNER JOIN EXAMPLE, EQUIVALENT TO A NATURAL JOIN
 -- SELECT description, date_served, name
 -- FROM Meal, Restaurant WHERE Meal.restaurant_id = Restaurant.restaurant_id
 -- ORDER BY description DESC;
@@ -86,3 +86,5 @@
 -- SELECT m.* FROM Meal m;
 -- SELECT * FROM Meal m;
 *******************************************************************************************************************
+-- THE CARTESIAN PRODUCT
+SELECT * FROM Meal, restaurant;
