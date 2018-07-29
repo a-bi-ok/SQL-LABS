@@ -88,3 +88,54 @@
 *******************************************************************************************************************
 -- THE CARTESIAN PRODUCT
 SELECT * FROM Meal, restaurant;
+*******************************************************************************************************************
+AGGREGATES
+-- SELECT COUNT(accommodations_id)
+-- FROM Accommodations;
+
+-- SELECT MIN(cost_per_night)
+-- FROM Accommodations;
+
+-- SELECT Resort_type.resort_type_id, Resort_type.resort_type,
+-- COUNT(Resort.resort_id) AS nr_resorts
+-- FROM Resort_type
+-- JOIN Resort ON Resort_type.resort_type_id = Resort.resort_type_id
+-- GROUP BY Resort_type.resort_type_id, Resort_type.resort_type
+-- ORDER BY nr_resorts DESC
+
+SELECT Resort_type.resort_type_id, Resort_type.resort_type,
+COUNT(Accommodations.accommodations_id) AS nr_accommodations
+FROM Resort_type
+JOIN Resort ON Resort_type.resort_type_id = Resort.resort_type_id
+JOIN Accommodations ON Accommodations.resort_id = Resort.resort_id
+GROUP BY Resort_type.resort_type_id, Resort_type.resort_type
+HAVING COUNT(Accommodations.accommodations_id) < 3
+
+SELECT Recording_artist.Recording_artist_id, Recording_artist.artist_name, Musical_genre.Musical_genre,
+COUNT(Song.song_id) AS nr_songs
+FROM Musical_genre
+JOIN Album ON Album.Musical_genre_id = Musical_genre.Musical_genre_id
+JOIN Song ON Album.Album_id = Song.Album_id
+JOIN Recording_artist ON Recording_artist.Recording_artist_id = Album.Recording_artist_id
+GROUP BY Recording_artist.Recording_artist_id, Recording_artist.artist_name, Musical_genre.Musical_genre
+ORDER BY nr_songs
+
+
+-- PROJECT
+SELECT song_name FROM Song;
+
+-- SELECT COUNT(song_id)
+-- FROM Song WHERE song_name = 'If You See Kay';
+
+
+
+
+
+
+
+
+
+
+
+
+
