@@ -1,0 +1,253 @@
+-- To avoid errors, drop tables if they exist.
+-- DROP TABLE line_item;
+-- DROP TABLE customer_order;
+-- DROP TABLE customer;
+-- DROP TABLE item;
+
+CREATE TABLE customer(
+customer_ID DECIMAL(10) NOT NULL,
+customer_first VARCHAR(30),
+customer_last VARCHAR(40),
+customer_total DECIMAL(12, 2),
+PRIMARY KEY (customer_ID));
+			 
+INSERT INTO customer VALUES(1,'John','Smith',0);
+INSERT INTO customer VALUES(2,'Mary','Berman',0);
+INSERT INTO customer VALUES(3,'Elizabeth','Johnson',0);
+INSERT INTO customer VALUES(4,'Peter','Quigley',0);
+INSERT INTO customer VALUES(5,'Stanton','Hurley',0);
+INSERT INTO customer VALUES(6,'Yvette','Presley',0);
+INSERT INTO customer VALUES(7,'Hilary','Marsh',0);
+			 
+CREATE TABLE ITEM(
+item_id DECIMAL(10) NOT NULL,
+description VARCHAR(30),
+price DECIMAL(10),
+PRIMARY KEY (item_id));
+			 
+INSERT INTO item VALUES(1,'Plate',10);
+INSERT INTO item VALUES(2,'Bowl',11);
+INSERT INTO item VALUES(3,'Knife',5);
+INSERT INTO item VALUES(4,'Fork',5);
+INSERT INTO item VALUES(5,'Spoon',5);
+INSERT INTO item VALUES(6,'Cup',12);
+			 
+CREATE TABLE customer_order (
+order_id DECIMAL(10) NOT NULL,
+customer_id DECIMAL(10) NOT NULL,
+order_total DECIMAL(12,2),
+order_date DATE,
+PRIMARY KEY (ORDER_ID),
+FOREIGN KEY (CUSTOMER_ID) REFERENCES customer);
+			 
+INSERT INTO customer_order VALUES(1,1,506,CAST('18-DEC-2005' AS DATE));
+INSERT INTO customer_order VALUES(2,1,1000,CAST('17-DEC-2005' AS DATE));
+INSERT INTO customer_order VALUES(3,3,15,CAST('19-DEC-2005' AS DATE));
+INSERT INTO customer_order VALUES(4,3,15,CAST('20-DEC-2005' AS DATE));
+INSERT INTO customer_order VALUES(5,2,1584,CAST('18-DEC-2005' AS DATE));
+INSERT INTO customer_order VALUES(6,4,100,CAST('17-DEC-2005' AS DATE));
+INSERT INTO customer_order VALUES(7,5,40,CAST('18-DEC-2005' AS DATE));
+INSERT INTO customer_order VALUES(8,1,10,CAST('19-DEC-2005' AS DATE));
+											  
+CREATE TABLE line_item (
+order_id      DECIMAL(10) NOT NULL,
+item_id       DECIMAL(10) NOT NULL,
+item_quantity DECIMAL(10) NOT NULL,
+line_price    DECIMAL(12,2),
+PRIMARY KEY (ORDER_ID, ITEM_ID),
+FOREIGN KEY (ORDER_ID) REFERENCES customer_order,
+FOREIGN KEY (ITEM_ID) REFERENCES item);
+											  
+INSERT INTO line_item VALUES(1,1,10,100);
+INSERT INTO line_item VALUES(1,5,2,10);
+INSERT INTO line_item VALUES(1,2,36,396);
+INSERT INTO line_item VALUES(2,1,95,950);
+INSERT INTO line_item VALUES(2,3,10,50);
+INSERT INTO line_item VALUES(3,4,3,15);
+INSERT INTO line_item VALUES(4,4,3,15);
+INSERT INTO line_item VALUES(5,6,132,1584);
+INSERT INTO line_item VALUES(6,1,10,100);
+INSERT INTO line_item VALUES(7,5,5,25);
+INSERT INTO line_item VALUES(7,4,3,15);
+INSERT INTO line_item VALUES(8,5,2,10);
+COMMIT;
+		
+DROP TABLE line_item; 											  
+SELECT * FROM Customer;	
+SELECT * FROM Customer_Order;
+SELECT * FROM Item;	
+SELECT * FROM Line_Item;
+											  
+CREATE OR REPLACE FUNCTION ADD_CUSTOMER_HARRY() RETURNS VOID
+AS
+$proc$
+       BEGIN
+         INSERT INTO Customer
+                    (customer_id,customer_first,customer_last, customer_total)
+         VALUES (8, 'Harry', 'Joker', 0);
+       END;
+$proc$ LANGUAGE plpgsql	
+											  
+DO $$
+  BEGIN
+   EXECUTE ADD_CUSTOMER_HARRY();
+END; $$	
+
+-- ALTERNATIVE TO EXECUTING A FXN IN POSTGRES											  
+SELECT ADD_CUSTOMER_HARRY()
+	
+											  
+										  
+-- TABLE VERIFICATION											  											  
+SELECT * FROM Customer;	
+											  
+--GENERIC SQL FUNCTION											  
+CREATE OR REPLACE FUNCTION ADD_CUSTOMER( -- Create a new customer
+   cus_id_arg IN DECIMAL, -- The new customer ID, must be unused
+   first_name_arg IN VARCHAR, -- The new customer’s first name
+   last_name_arg IN VARCHAR, -- The new customer’s last name
+   customer_total_arg IN DECIMAL(12,2)) -- The new customer’s variable total
+   RETURNS VOID LANGUAGE plpgsql
+AS -- Required by the syntax, but it doesn’t do anything in particular
+$resuableproc$ --opens the $$ quotation for the block
+BEGIN
+   INSERT INTO CUSTOMER
+    (customer_id,customer_first,customer_last,customer_total)
+    VALUES(cus_id_arg,first_name_arg,last_name_arg,customer_total_arg);
+END;
+$resuableproc$; -- closes the $$ quotation for the block
+											  
+DO
+$$
+BEGIN
+EXECUTE ADD_CUSTOMER(11, 'Gabriela', 'Jury', -10.99);
+END; $$	
+	
+								 
+SELECT * FROM Customer;								 
+DELETE FROM Customer
+WHERE customer_id = 11;											  
+											  
+-- EXECUTING STORED PROCEDURE DATA INSERT METHOD											  
+DO
+$$
+  BEGIN
+   EXECUTE ADD_CUSTOMER(9, 'Mary', 'Smith');
+END; $$			
+											  											  
+CREATE OR REPLACE FUNCTION DELETE_CUSTOMER() RETURNS VOID
+AS
+$proc$
+       BEGIN
+		DELETE FROM Line_item
+        WHERE order_id IN (SELECT order_id
+                   FROM Customer_order
+                   WHERE customer_id = 5);				 
+       END;
+$proc$ LANGUAGE plpgsql											  
+							
+								 
+-- ROW DEELETE REUSEABLE FUNCTION(METHOD)								 
+CREATE OR REPLACE FUNCTION DELETE_CUSTOMER(cus_id_arg IN DECIMAL) 
+   RETURNS VOID LANGUAGE plpgsql
+AS 
+$resuableproc$ 
+BEGIN
+	DELETE FROM Line_item
+        WHERE order_id IN (SELECT order_id
+                   FROM Customer_order
+                   WHERE customer_id = cus_id_arg);									 								 
+END;
+$resuableproc$; -- closes the $$ quotation for the block
+								 
+-- 	VERIFYING DELETE OF JOHN SMITH LINE ITEMS														 
+SELECT * FROM Line_Item;
+															 
+SELECT * FROM Customer;								 
+								 
+DO
+$$
+  BEGIN
+   EXECUTE DELETE_CUSTOMER(1);
+END; $$		
+								 
+-- TRIGGERS
+CREATE OR REPLACE FUNCTION no_neg_cust_bal_func()
+ RETURNS TRIGGER LANGUAGE plpgsql AS $trigfunc$
+ BEGIN
+   RAISE EXCEPTION USING MESSAGE = 'Customer balance cannot be negitive.', ERRCODE = 22000;							
+ END;
+ $trigfunc$;
+			 											  						  
+CREATE TRIGGER no_neg_cust_bal_trg
+      BEFORE UPDATE OR INSERT ON customer
+      FOR EACH ROW WHEN(new.customer_total < 0)
+								 
+								 
+								 
+								 
+      EXECUTE PROCEDURE no_neg_cust_bal_func();											  
+											  
+DO
+$$
+BEGIN
+EXECUTE ADD_CUSTOMER(11, 'Tim', 'Abiok', -99.99);
+END; $$	
+
+CREATE OR REPLACE FUNCTION no_glass_cust_last_func()
+ RETURNS TRIGGER LANGUAGE plpgsql AS $trigfunc$
+ BEGIN
+   RAISE EXCEPTION USING MESSAGE = 'Patrons with the last name of Glass are not permitted as customers.', 
+   ERRCODE = 42602;							
+ END;
+ $trigfunc$;
+			 											  						  
+CREATE TRIGGER no_glass_cust_last_trig
+      BEFORE UPDATE OR INSERT ON customer
+      FOR EACH ROW WHEN(new.customer_last = 'Glass')							 
+      EXECUTE PROCEDURE no_glass_cust_last_func();											  
+											  
+DO
+$$
+BEGIN
+EXECUTE ADD_CUSTOMER(11, 'Tim', 'Glass', 99.99);
+END; $$									 
+
+CREATE TABLE Item_Price_History(
+item_id DECIMAL(10) NOT NULL,
+description VARCHAR(30),
+price DECIMAL(10),
+stamp TIMESTAMP NOT NULL,             
+PRIMARY KEY (ITEM_ID, STAMP),
+FOREIGN KEY (ITEM_ID) REFERENCES item);
+
+CREATE OR REPLACE FUNCTION price_hist() RETURNS TRIGGER AS $price_hist$
+    BEGIN  
+        -- Create a row in ITEM_PRICE_HISTORY to reflect any changes in ITEM price.
+        IF (TG_OP = 'UPDATE') THEN
+            INSERT INTO Item_Price_History VALUES(OLD.item_id, OLD.description, OLD.price, now());
+            RETURN OLD;
+        END IF;
+    END;
+$price_hist$ LANGUAGE plpgsql;
+
+CREATE TRIGGER price_hist
+AFTER INSERT OR UPDATE OR DELETE ON Item
+    FOR EACH ROW EXECUTE PROCEDURE price_hist();
+												  
+UPDATE Item
+SET price = 11
+WHERE description = 'Plate';												  
+
+UPDATE Item
+SET price = 4
+WHERE description = 'Spoon';													  
+
+DROP TRIGGER price_hist ON Item;												  
+												  
+SELECT * FROM Item_Price_History;												  
+SELECT * FROM Item;												  
+
+												  
+								 
+         
