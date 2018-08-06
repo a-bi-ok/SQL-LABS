@@ -1,0 +1,297 @@
+DROP TABLE Package;
+DROP TABLE Shipping_Type;
+DROP TABLE Mailing_Address;
+DROP TABLE State;
+DROP TABLE Cus_Transaction;
+DROP TABLE Customer;
+DROP TABLE Merchandize;
+DROP TABLE Seller;
+DROP TABLE Product;
+DROP TABLE Inventory;
+DROP TABLE Product_Category;
+
+-- 1
+CREATE TABLE Product_Category(
+category_ID DECIMAL(12) NOT NULL,
+category_name VARCHAR(64),
+quantity DECIMAL(12),
+description VARCHAR(255),
+PRIMARY KEY (CATEGORY_ID));
+			 
+INSERT INTO Product_Category VALUES(1001,'Amazon Device Accessories',40, 'Amazon Device Accessories');
+INSERT INTO Product_Category VALUES(1002,'Amazon Kindle',40, 'Amazon Kindle');
+INSERT INTO Product_Category VALUES(1003,'Automotive & Powersports',40, 'Automotive & Powersports');
+INSERT INTO Product_Category VALUES(1004,'Baby Products',40, 'Baby Products');
+INSERT INTO Product_Category VALUES(1005,'Beauty',40, 'Beauty');
+INSERT INTO Product_Category VALUES(1006,'Books',40, 'Books');			 
+INSERT INTO Product_Category VALUES(1007,'Camera & Photo',40, 'Camera & Photo');
+INSERT INTO Product_Category VALUES(1008,'Cell Phones & Accessories',40, 'Cell Phones & Accessories');
+INSERT INTO Product_Category VALUES(1009,'Collectible Coins',40, 'Collectible Coins');
+INSERT INTO Product_Category VALUES(1010,'Consumer Electronics',40, 'Consumer Electronics');
+INSERT INTO Product_Category VALUES(1011,'Entertainment Collectibles',40, 'Entertainment Collectibles');
+INSERT INTO Product_Category VALUES(1012,'Fine Art',40, 'Fine Art');
+INSERT INTO Product_Category VALUES(1013,'Grocery & Gourmet Food',40, 'Grocery & Gourmet Food');
+INSERT INTO Product_Category VALUES(1014,'Health & Personal Care',40, 'Health & Personal Care');
+INSERT INTO Product_Category VALUES(1015,'Home & Garden',40, 'Home & Garden');
+INSERT INTO Product_Category VALUES(1016,'Independent Design',40, 'Independent Design');
+INSERT INTO Product_Category VALUES(1017,'Industrial & Scientific',40, 'Industrial & Scientific');
+INSERT INTO Product_Category VALUES(1018,'Kindle & Amazon Fire TV Accessories',40, 'Kindle & Amazon Fire TV Accessories');
+INSERT INTO Product_Category VALUES(1019,'Major Appliances',40, 'Major Appliances');
+INSERT INTO Product_Category VALUES(1020,'Music',40, 'Music');
+INSERT INTO Product_Category VALUES(1021,'Musical Instruments',40, 'Musical Instruments');
+INSERT INTO Product_Category VALUES(1022,'Office Products',40, 'Office Products');
+INSERT INTO Product_Category VALUES(1023,'Outdoors',40, 'Outdoors');
+INSERT INTO Product_Category VALUES(1024,'Personal Computers',40, 'Personal Computers');			 
+INSERT INTO Product_Category VALUES(1025,'Pet Supplies',40, 'Pet Supplies');			 
+INSERT INTO Product_Category VALUES(1026,'Software',40, 'Software');			 
+INSERT INTO Product_Category VALUES(1027,'Sports',40, 'Sports');			 
+INSERT INTO Product_Category VALUES(1028,'Sports Collectibles',40, 'Sports Collectibles');			 
+INSERT INTO Product_Category VALUES(1029,'Tools & Home Improvement',40, 'Tools & Home Improvement');			 
+INSERT INTO Product_Category VALUES(1030,'Toys & Games',40, 'Toys & Games');			 
+INSERT INTO Product_Category VALUES(1031,'Video, DVD & Blu-ray',40, 'Video, DVD & Blu-ray');			
+INSERT INTO Product_Category VALUES(1032,'Video Games',40, 'Video Games');			
+INSERT INTO Product_Category VALUES(1033,'Watches',40, 'Watches');			
+
+-- 2
+CREATE TABLE Inventory(
+inventory_ID DECIMAL(12) NOT NULL,
+category_ID DECIMAL(12) NOT NULL,
+inventory_name VARCHAR(64),
+inventory_quantity DECIMAL(12),
+description VARCHAR(255),
+FOREIGN KEY (CATEGORY_ID) REFERENCES Product_Category,
+PRIMARY KEY (INVENTORY_ID));		 			 
+-- 3
+CREATE TABLE Product(
+product_ID DECIMAL(12) NOT NULL,
+category_ID DECIMAL(12) NOT NULL,
+name VARCHAR(64),
+description VARCHAR(255),
+product_condition VARCHAR(12),
+FOREIGN KEY (CATEGORY_ID) REFERENCES Product_Category,
+PRIMARY KEY (PRODUCT_ID));
+			 
+INSERT INTO Product 
+			 VALUES(3001, 1007, 'Self Driving Cam', 'A self‐driving video camera which automatically follows a subject that is being recorded', 'New');
+INSERT INTO Product 
+			 VALUES(3002, 1024, 'Holographic Keyboard', 'A keyboard that emits a three‐dimensional projection of a keyboard', 'New');
+INSERT INTO Product 
+			 VALUES(3003, 1033, 'Garmin WaterProof Watch', 'WaterProof Watch up to 10 hrs', 'New');
+INSERT INTO Product 
+			 VALUES(3004, 1004, 'Baby Travel Bag', 'Multi Compartment travel all weather companion', 'New');
+INSERT INTO Product 
+			 VALUES(3005, 1031, 'Samsung TV', 'The beauty of the Q7C arc is a visual spectacle', 'New');
+			 
+-- 4
+CREATE TABLE Seller(
+seller_ID DECIMAL(12) NOT NULL,
+seller_first VARCHAR(64),
+seller_last VARCHAR(64),
+company_name VARCHAR(64),
+seller_location VARCHAR(12),
+PRIMARY KEY (SELLER_ID));			 
+INSERT INTO Seller 
+	VALUES(4001, 'Jewel', 'Pollard', 'Pollard Electronics', 'Hawaii');
+INSERT INTO Seller 
+	VALUES(4002, 'Tim', 'Tapp', 'Tapp Computers', 'London');
+	
+-- 5
+CREATE TABLE Merchandize(
+merchandize_id DECIMAL(12) NOT NULL,
+seller_id DECIMAL(12) NOT NULL,
+product_id DECIMAL(12) NOT NULL,
+unit_price DECIMAL(19,2),
+quantity_shipped DECIMAL(12),
+FOREIGN KEY (PRODUCT_ID) REFERENCES Product,
+FOREIGN KEY (SELLER_ID) REFERENCES Seller,
+PRIMARY KEY (PRODUCT_ID, SELLER_ID));
+
+			 
+-- 6
+CREATE TABLE Customer(
+customer_ID DECIMAL(12) NOT NULL,
+customer_first VARCHAR(64),
+customer_last VARCHAR(64),
+dob DATE NOT NULL,
+customer_email VARCHAR(64),
+customer_gender VARCHAR(12),
+PRIMARY KEY (CUSTOMER_ID));
+
+INSERT INTO Customer 
+			 VALUES(6004, 'Matt', 'Baggot',  CAST('04-JUN-1985' AS DATE), 'mbaggot@mail.com','M');
+INSERT INTO Customer 
+			 VALUES(6005, 'Thomas', 'Wells',  CAST('14-JUN-1980' AS DATE), 'twells@mail.com','M');
+
+
+
+-- 7			 
+CREATE TABLE Cus_Transaction (
+transaction_id DECIMAL(12) NOT NULL,
+product_id DECIMAL(12) NOT NULL,
+customer_id DECIMAL(12) NOT NULL,
+line_price DECIMAL(12,2),
+transaction_quantity DECIMAL(12),
+transaction_stamp TIMESTAMP NOT NULL,
+line_total DECIMAL(12,2),
+PRIMARY KEY (TRANSACTION_ID),
+FOREIGN KEY (PRODUCT_ID) REFERENCES Product,
+FOREIGN KEY (CUSTOMER_ID) REFERENCES Customer);
+			 
+-- 8
+CREATE TABLE State (
+state_id DECIMAL(12) NOT NULL,
+state_name VARCHAR(64),
+abbreviation VARCHAR(12),
+PRIMARY KEY (STATE_ID));
+INSERT INTO State VALUES(8001, 'Virginia', 'VA');
+INSERT INTO State VALUES(8002, 'Florida', 'FL');
+INSERT INTO State VALUES(8003, 'New York', 'NY');
+INSERT INTO State VALUES(8004, 'Texas', 'TX');
+INSERT INTO State VALUES(8005, 'Arizona', 'AZ');
+			 
+-- 9			 
+CREATE TABLE Mailing_Address (
+address_id DECIMAL(12) NOT NULL,
+customer_id DECIMAL(12) NOT NULL,
+street1 VARCHAR(64),
+street2 VARCHAR(64),
+city VARCHAR(12),
+state_id DECIMAL(12) NOT NULL,
+postal_code VARCHAR(12),
+PRIMARY KEY (ADDRESS_ID),
+FOREIGN KEY (CUSTOMER_ID) REFERENCES Customer,
+FOREIGN KEY (STATE_ID) REFERENCES State);
+		 
+
+-- 10			 
+CREATE TABLE Shipping_Type (
+shipping_type_id DECIMAL(12) NOT NULL,
+Shipping_type VARCHAR(64),
+shipping_cost DECIMAL(19,2),
+num_days_to_delivery DECIMAL(12),
+PRIMARY KEY (SHIPPING_TYPE_ID));
+INSERT INTO Shipping_Type VALUES(1001,'PRIME', 0.0, 2);
+INSERT INTO Shipping_Type VALUES(1002,'EXPEDITED', 3.99, 4);
+INSERT INTO Shipping_Type VALUES(1003,'REGULAR', 7.99, 5);		 
+
+-- 11
+CREATE TABLE Package (
+package_id DECIMAL(12) NOT NULL,
+transaction_id DECIMAL(12) NOT NULL,
+shipping_type_id DECIMAL(12) NOT NULL,
+item_count DECIMAL(12),
+dimensions VARCHAR(12),
+weight DECIMAL(12),
+shipping_date DATE  NOT NULL,
+delivery_date DATE  NOT NULL,
+FOREIGN KEY (TRANSACTION_ID) REFERENCES Cus_Transaction,
+FOREIGN KEY (SHIPPING_TYPE_ID) REFERENCES Shipping_Type,
+PRIMARY KEY (PACKAGE_ID));
+										  
+COMMIT;
+		
+SELECT * FROM Customer;	
+SELECT * FROM Customer_Order;
+SELECT * FROM Item;	
+SELECT * FROM Line_Item;
+										  		  
+-- TABLE VERIFICATION											  											  
+			 
+-- ASPECT 3		 		 
+CREATE OR REPLACE FUNCTION Add_Cus(customer_id_arg IN DECIMAL, 
+									    customer_first_arg IN VARCHAR,
+									    customer_last_arg IN VARCHAR, 
+										dob_arg IN DATE, 
+										customer_email_arg IN VARCHAR,
+								        customer_gender_arg IN VARCHAR)
+   RETURNS VOID LANGUAGE plpgsql
+AS
+$resuableproc$ 
+BEGIN
+	 INSERT INTO Customer 
+			 VALUES(customer_id_arg, 
+					customer_first_arg, 
+					customer_last_arg,
+					dob_arg,
+					customer_email_arg, 
+					customer_gender_arg);
+END;
+$resuableproc$;	
+			 
+DROP FUNCTION Add_Cus(decimal, VARCHAR, VARCHAR, DATE, VARCHAR, VARCHAR);
+			 
+DO
+$$
+BEGIN
+EXECUTE Add_Cus(6002, 'Pamela', 'Farr',  CAST('14-JUN-1979' AS DATE), 'pfarr@mail.com','F');
+EXECUTE Add_Cus(6003, 'Timothy', 'Abiok',  CAST('14-MAY-1985' AS DATE), 'tabiok@mail.com','M');
+
+END; $$	
+			 
+DO
+$$
+BEGIN			 
+INSERT INTO Customer 
+EXECUTE Ship_Product(501, 4001, 3001, 99.99, 4);
+EXECUTE Ship_Product(502, 4001, 3002, 29.99, 4);
+END; $$	
+
+-- ASPECT 2 		 		 
+SELECT Product.product_id, Product.name, Merchandize.unit_price, Merchandize.quantity_shipped
+ FROM Merchandize
+ JOIN Product ON Product.product_id = Merchandize.product_id
+ GROUP BY Product.product_id, Product.name, Merchandize.unit_price, Merchandize.quantity_shipped
+ HAVING (Merchandize.quantity_shipped) < 11	
+ ORDER BY product_id
+								 								 
+-- SELECT * FROM Customer;								 
+-- DELETE FROM Customer
+-- WHERE customer_id = 11;											  
+											  									 															 
+-- ROW DEELETE REUSEABLE FUNCTION(METHOD)								 
+CREATE OR REPLACE FUNCTION DELETE_MERCHANDIZE(merchandize_id_arg IN DECIMAL) 
+   RETURNS VOID LANGUAGE plpgsql
+AS 
+$resuableproc$ 
+BEGIN
+	DELETE FROM Merchandize
+        WHERE merchandize_id = merchandize_id_arg;									 								 
+END;
+$resuableproc$; -- closes the $$ quotation for the block
+
+	
+DROP FUNCTION DELETE_MERCHANDIZE(decimal);	
+
+DO
+$$
+  BEGIN
+   EXECUTE DELETE_MERCHANDIZE(501);
+   EXECUTE DELETE_MERCHANDIZE(502);
+END; $$		
+			 
+			 								 
+-- TRIGGERS TRIGGERS
+-- 	 INSERT INTO Product_Shipment VALUES(OLD.product_id, OLD.seller_id, OLD.unit_price, OLD.quantity_shipped);
+-- 	 ELSIF EXISTS (SELECT 1 FROM PRODUCT WHERE product_id = product_id_arg) THEN
+-- 	 INSERT INTO Product_Shipment VALUES(OLD.product_id, OLD.seller_id, OLD.unit_price, OLD.quantity_shipped);
+			 
+CREATE OR REPLACE FUNCTION inventory_update() RETURNS TRIGGER AS $store_invent$
+    BEGIN  
+        IF (TG_OP = 'UPDATE') THEN
+            INSERT INTO Inventory VALUES(OLD.item_id, OLD.description, OLD.price, now());
+            RETURN OLD;
+		ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO Inventory SELECT 'I', now(), user, NEW.*;
+			RETURN OLD;
+        END IF;
+    END;
+$store_invent$ LANGUAGE plpgsql;
+
+CREATE TRIGGER store_invent
+AFTER INSERT OR UPDATE OR DELETE ON Item
+    FOR EACH ROW EXECUTE PROCEDURE inventory_update();
+									  
+
+        
+						  
+
