@@ -226,11 +226,12 @@ DO
 $$
 BEGIN
 EXECUTE ADD_PRODUCT(1, 1007, 'Self Driving Cam', 'A self‐driving video camera which automatically
-follows a subject that is being recorded', 'new');
+follows a subject that is being recorded', 'New');
 EXECUTE ADD_PRODUCT(2, 1024, 'Holographic Keyboard', 'A keyboard that emits a
-three‐dimensional projection of a keyboard', 'new');
+three‐dimensional projection of a keyboard', 'New');
 END; $$	
-			 			 
+-- SELECT * From Product;
+
 --ASPECT ONE question d----------------------------------------------------------------------------------------------------------------------------------
 SELECT Product.product_id, Product.name, Product_Shipment.unit_price
  FROM Product_Shipment
@@ -238,26 +239,22 @@ SELECT Product.product_id, Product.name, Product_Shipment.unit_price
  JOIN Product_category ON Product_category.category_id = Product.category_id
  GROUP BY Product.product_id, Product.name, Product_Shipment.unit_price
  HAVING (Product_Shipment.unit_price) < 30	
- ORDER BY product_id			 
+ ORDER BY product_id
+			 
+
 -- =======================================================================================================================================================		 
 
 --ASPECT TWO**********************************************************************************************************************************************
 --ASPECT TWO question b---------------------------------------------------------------------------------------------------------------------------------			 
-CREATE OR REPLACE FUNCTION Ship_Prodcut(merchandize_id_arg IN DECIMAL, 
-									    seller_id_arg IN DECIMAL,
-									    product_id_arg IN DECIMAL, 
-										unit_price_arg IN DECIMAL, 
-										quantity_shipped_arg IN DECIMAL)
+CREATE OR REPLACE FUNCTION Ship_Prodcut(merchandize_id_arg IN DECIMAL, seller_id_arg IN DECIMAL,
+									       product_id_arg IN DECIMAL, unit_price_arg IN DECIMAL, 
+										   quantity_shipped_arg IN DECIMAL)
    RETURNS VOID LANGUAGE plpgsql
 AS
 $resuableproc$ 
 BEGIN
 	 INSERT INTO Merchandize 
-			 VALUES(merchandize_id_arg, 
-					seller_id_arg,
-					product_id_arg, 
-					unit_price_arg, 
-					quantity_shipped_arg)
+			 VALUES(merchandize_id_arg, seller_id_arg, product_id_arg, unit_price_arg, quantity_shipped_arg)
 END;
 $resuableproc$;	
 			 
@@ -285,23 +282,14 @@ SELECT Product.product_id, Product.name, Merchandize.unit_price, Merchandize.qua
 -- ASPECT THREE ******************************************************************************************************************************************** 		 		 
 -- ASPECT THREE ---------------------------------------------------------------------------------------------------------------------------------------------
 -- question b
-CREATE OR REPLACE FUNCTION Add_Cus(customer_id_arg IN DECIMAL, 
-									    customer_first_arg IN VARCHAR,
-									    customer_last_arg IN VARCHAR, 
-										dob_arg IN DATE, 
-										customer_email_arg IN VARCHAR,
-								        customer_gender_arg IN VARCHAR)
+CREATE OR REPLACE FUNCTION Add_Cus(customer_id_arg IN DECIMAL, customer_first_arg IN VARCHAR, customer_last_arg IN VARCHAR, 
+								   dob_arg IN DATE, customer_email_arg IN VARCHAR, customer_gender_arg IN VARCHAR)
    RETURNS VOID LANGUAGE plpgsql
 AS
 $resuableproc$ 
 BEGIN
 	 INSERT INTO Customer 
-			 VALUES(customer_id_arg, 
-					customer_first_arg, 
-					customer_last_arg,
-					dob_arg,
-					customer_email_arg, 
-					customer_gender_arg);
+			 VALUES(customer_id_arg, customer_first_arg, customer_last_arg, dob_arg, customer_email_arg, customer_gender_arg);
 END;
 $resuableproc$;	
 			 
